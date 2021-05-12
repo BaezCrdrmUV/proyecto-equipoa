@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 using System.Net.Http;
-using System.Text.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using TypeMeDesktop.ComunicacionAPI;
+using System;
 
 namespace TypeMeDesktop.Ventanas
 {
@@ -21,6 +12,8 @@ namespace TypeMeDesktop.Ventanas
     /// </summary>
     public partial class Login : Window
     {
+        private string urlLogin = "http://localhost:4000/typers/loginTyper";
+        
         public Login()
         {
             InitializeComponent();
@@ -28,9 +21,22 @@ namespace TypeMeDesktop.Ventanas
 
         private void ClickLogin(object sender, RoutedEventArgs e)
         {
-            VentanaPrincipal inicio = new VentanaPrincipal();
-            inicio.Show();
-            this.Close();
+            if (CamposCorrectos())
+            {
+                DesactivarBotones();
+                ConsultaJson infoLoginJson = CrearConsulta();
+                APILogin(infoLoginJson);
+            }
+            else
+            {
+                MessageBox.Show("Los campos estan incompletos");
+            }
+        }
+
+        private void DesactivarBotones()
+        {
+            botonLogin.IsEnabled = false;
+            botonRegistro.IsEnabled = false;
         }
 
         private void ClickCrearCuenta(object sender, RoutedEventArgs e)
@@ -38,33 +44,71 @@ namespace TypeMeDesktop.Ventanas
             RegistrarCuenta registro = new RegistrarCuenta();
             registro.Show();
             this.Close();
-
-            //Solicitud();
         }
 
-        //private async void Solicitud()
-        //{
-        //    string url = "https://jsonplaceholder.typicode.com/posts";
-        //    var cliente = new HttpClient();
+        private bool CamposCorrectos()
+        {
+            if (!usuario.Text.Trim().Equals("") &&
+                !contrasenia.Password.Trim().Equals(""))
+            {
+                return true;
+            }
 
-        //    DatosPrueba post = new DatosPrueba()
-        //    {
-        //        userID = 30,
-        //        body = "Este es el cuerpo de la consulta",
-        //        title = "Este es el titulo"
-        //    };
+            return false;
+        }
 
-        //    var data = JsonSerializer.Serialize<DatosPrueba>(post);
-        //    HttpContent content = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
+        private ConsultaJson CrearConsulta()
+        {
+            ConsultaJson consulta = new ConsultaJson()
+            {
+                IdentificadorTyper = usuario.Text.Trim(),
+                InformacionComplementaria = contrasenia.Password.Trim()
+            };
 
-        //    var httpResponse = await cliente.PostAsync(url, content);
+            return consulta;
+        }
 
-        //    if (httpResponse.IsSuccessStatusCode)
-        //    {
-        //        var result = await httpResponse.Content.ReadAsStringAsync();
-        //        var postResult = JsonSerializer.Deserialize<DatosPrueba>(result);
-        //        MessageBox.Show("El resultado de la operacion es \n" + postResult.id + "\n" + postResult.userID + "\n" + postResult.title + "\n" + postResult.body);
-        //    }
-        //}
+        private async void APILogin(ConsultaJson infoTyper)
+        {
+            var cliente = new HttpClient();
+
+            string json = JsonConvert.SerializeObject(infoTyper);
+            HttpContent content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            try
+            {
+                var httpResponse = await cliente.PostAsync(urlLogin, content);
+
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    var result = await httpResponse.Content.ReadAsStringAsync();
+                    var jsonResponseObj = JObject.Parse(result);
+
+                    if ((bool)jsonResponseObj["status"] == true)
+                    {
+                        string idTyper = (string)jsonResponseObj.SelectToken("result.IdTyper");
+                        VentanaPrincipal inicio = new(idTyper);
+                        inicio.Show();
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show((string)jsonResponseObj["message"]);
+                    }
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show("Ocurrio un error en la conexion");
+            }catch (HttpRequestException)
+            {
+                MessageBox.Show("Ocurrio un error en la conexion");
+            }
+            finally
+            {
+                botonLogin.IsEnabled = true;
+                botonRegistro.IsEnabled = true;
+            }
+        }
     }
 }

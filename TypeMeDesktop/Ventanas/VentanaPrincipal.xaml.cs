@@ -21,12 +21,15 @@ namespace TypeMeDesktop.Ventanas
     /// </summary>
     public partial class VentanaPrincipal : Window
     {
-        public VentanaPrincipal()
+        private string identificadorTyper;
+
+        public VentanaPrincipal(string idTyper)
         {
             this.Width = 960;
             this.Height = 540;
             this.ResizeMode = ResizeMode.NoResize;
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            this.identificadorTyper = idTyper;
             InitializeComponent();
 
             Random numeros = new Random();
