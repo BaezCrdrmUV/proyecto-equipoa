@@ -2,7 +2,7 @@
 using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using TypeMeDesktop.ComunicacionAPI;
+using TypeMeDesktop.ComunicacionAPI.Login;
 using System;
 
 namespace TypeMeDesktop.Ventanas
@@ -68,11 +68,11 @@ namespace TypeMeDesktop.Ventanas
             return consulta;
         }
 
-        private async void APILogin(ConsultaJson infoTyper)
+        private async void APILogin(ConsultaJson consulta)
         {
             var cliente = new HttpClient();
 
-            string json = JsonConvert.SerializeObject(infoTyper);
+            string json = JsonConvert.SerializeObject(consulta);
             HttpContent content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
             try
@@ -82,18 +82,17 @@ namespace TypeMeDesktop.Ventanas
                 if (httpResponse.IsSuccessStatusCode)
                 {
                     var result = await httpResponse.Content.ReadAsStringAsync();
-                    var jsonResponseObj = JObject.Parse(result);
+                    var infoLogin = JsonConvert.DeserializeObject<RespuestaDeAPILogin>(result);
 
-                    if ((bool)jsonResponseObj["status"] == true)
+                    if (bool.Parse(infoLogin.status))
                     {
-                        string idTyper = (string)jsonResponseObj.SelectToken("result.IdTyper");
-                        VentanaPrincipal inicio = new(idTyper);
+                        VentanaPrincipal inicio = new VentanaPrincipal(infoLogin.result);
                         inicio.Show();
-                        this.Close();
+                        Close();
                     }
                     else
                     {
-                        MessageBox.Show((string)jsonResponseObj["message"]);
+                        MessageBox.Show(infoLogin.message);
                     }
                 }
             }

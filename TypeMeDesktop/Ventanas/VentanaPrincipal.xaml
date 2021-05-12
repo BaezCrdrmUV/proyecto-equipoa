@@ -7,7 +7,7 @@
         x:Class="TypeMeDesktop.Ventanas.VentanaPrincipal"
         mc:Ignorable="d"
         Title="TypeMe"
-        Height="580" Width="960">
+        Height="580" Width="960" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
@@ -46,7 +46,7 @@
         </Grid>
 
         <StackPanel Grid.Row="0" Grid.Column="1" Background="#D30000" Orientation="Horizontal">
-            <TextBlock Text="Angel de jesus" TextWrapping="WrapWithOverflow"  FontSize="20" VerticalAlignment="Center" TextBlock.Foreground="White" Width="651" />
+            <TextBlock x:Name="infoHeader" TextWrapping="WrapWithOverflow"  FontSize="20" VerticalAlignment="Center" TextBlock.Foreground="White" Width="651" />
         </StackPanel>
 
 

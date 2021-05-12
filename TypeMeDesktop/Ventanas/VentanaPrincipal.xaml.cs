@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TypeMeDesktop.ComunicacionAPI.Login;
 using TypeMeDesktop.Paginas;
 
 namespace TypeMeDesktop.Ventanas
@@ -21,16 +22,16 @@ namespace TypeMeDesktop.Ventanas
     /// </summary>
     public partial class VentanaPrincipal : Window
     {
-        private string identificadorTyper;
+        private InformacionTyper perfilTyper;
 
-        public VentanaPrincipal(string idTyper)
+        public VentanaPrincipal(InformacionTyper idTyper)
         {
-            this.Width = 960;
-            this.Height = 540;
-            this.ResizeMode = ResizeMode.NoResize;
-            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            this.identificadorTyper = idTyper;
+            this.perfilTyper = idTyper;
+
             InitializeComponent();
+
+            this.infoHeader.Text = perfilTyper.Username;
+
 
             Random numeros = new Random();
             for (int i = 0; i < 10; i++)
