@@ -6,7 +6,7 @@ services:
     ports: 
       - "3320:3306"
     volumes: 
-      - db_volume_typers:/var/lib/mysql
+     # - db_volume_typers:/var/lib/mysql
       - ../db/typers.sql:/docker-entrypoint-initdb.d/typers.sql:ro
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_0900_ai_ci']
     environment: 
@@ -16,19 +16,20 @@ services:
       MYSQL_USER: "root"
     container_name: db_typers
   
-  mysql_contactos:
-    image: mysql/mysql-server:latest
+  mongo_contactos:
+    image: mongo:4.4.4
     ports: 
-      - "3321:3306"
+      - "33021:27017"
+    hostname: mongo_contactos
+    restart: unless-stopped
     volumes: 
-      - db_volume_contactos:/var/lib/mysql
-      - ../db/contactos.sql:/docker-entrypoint-initdb.d/contactos.sql:ro
-    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_0900_ai_ci']
+      #- db_volume_contactos:/data/db
+      - ../db/contactos.js:/docker-entrypoint-initdb.d/contactos.js:ro
+    command: mongod --auth
     environment: 
-      MYSQL_ROOT_PASSWORD: "root"
-      MYSQL_HOST: localhost
-      MYSQL_DATABASE: "contactos"
-      MYSQL_USER: "root"
+      MONGO_INITDB_DATABASE: contactos
+      MONGO_INITDB_ROOT_USERNAME: adminContactos
+      MONGO_INITDB_ROOT_PASSWORD: proyecto2021
     container_name: db_contactos
   
   mysql_mensajes:
@@ -36,7 +37,7 @@ services:
     ports: 
       - "3322:3306"
     volumes: 
-      - db_volume_mensajes:/var/lib/mysql
+     # - db_volume_mensajes:/var/lib/mysql
       - ../db/mensajes.sql:/docker-entrypoint-initdb.d/mensajes.sql:ro
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_0900_ai_ci']
     environment: 
@@ -51,7 +52,7 @@ services:
     ports: 
       - "3323:3306"
     volumes: 
-      - db_volume_multimedia:/var/lib/mysql
+    #  - db_volume_multimedia:/var/lib/mysql
       - ../db/multimedia.sql:/docker-entrypoint-initdb.d/multimedia.sql:ro
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_0900_ai_ci']
     environment: 
@@ -90,15 +91,34 @@ services:
     depends_on: 
       - "mysql_mensajes"
     ports:
-      - "3325:80"
+      - "3326:80"
     build: 
-      context: ../MSMensajes/
+      context: ..\MSMensajes\
       dockerfile: Dockerfile
     environment: 
       DB_CONNECTION_STRING: "server=mysql_mensajes;user=adminMensajes;password=proyecto2021;database=Mensajes"
 
-volumes:
-  db_volume_typers:
-  db_volume_contactos:
-  db_volume_mensajes:
-  db_volume_multimedia:
+  ms_contactos:
+    image: ms_contactos
+    depends_on: 
+      - "mongo_contactos"
+    ports: 
+      - "3327:5000"
+    build: 
+      context: ..\MSContactos\
+      dockerfile: Dockerfile
+    environment: 
+      FLASK_ENV: production
+      FLASK_APP: src/app.py
+      FLASK_RUN_HOST: 0.0.0.0
+      MONGO_URI: mongodb://adminContactos:proyecto2021@mongo_contactos/contactos
+
+# volumes:
+#   db_volume_typers:
+#   db_volume_contactos:
+#   db_volume_mensajes:
+#   db_volume_multimedia:
+
+# networks: 
+#   backend:
+#     driver: bridge
