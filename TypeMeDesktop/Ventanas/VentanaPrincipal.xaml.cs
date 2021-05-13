@@ -52,7 +52,7 @@ namespace TypeMeDesktop.Ventanas
 
         private void ClickMiCuenta(object sender, RoutedEventArgs e)
         {
-            PaginaFrame.Navigate(new MiPerfil());
+            PaginaFrame.Navigate(new MiPerfil(perfilTyper));
         }
 
         private void CrearPreviewDeChat(string identificador)

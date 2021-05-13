@@ -24,7 +24,7 @@
             </Ellipse.Fill>
         </Ellipse>
 
-        <Button Grid.Row="1" FontSize="15" Width="200" Height="30" Style="{StaticResource BotonBasico}" Click="ActualizarFotoDePerfil">
+        <Button x:Name="botonImagen" Grid.Row="1" FontSize="15" Width="200" Height="30" Style="{StaticResource BotonBasico}" Click="ActualizarFotoDePerfil">
             Actualizar foto
         </Button>
 
@@ -37,8 +37,8 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Width="135" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" >Usuario:</TextBlock>
-                <TextBox Grid.Column="1" Text="Texto de ejemplo" Margin="44,0,0,0" Width="200" HorizontalAlignment="Left" Height="40" Template="{StaticResource InputControlTemplate}"></TextBox>
-                <Button Grid.Column="2" Width="50" Height="40" FontSize="50" Margin="20,0,0,0" Style="{StaticResource BotonBasico}" Click="ActualizarUsuario" HorizontalAlignment="Left">
+                <TextBox x:Name="campoUsuario" Grid.Column="1" Text="Texto de ejemplo" Margin="44,0,0,0" Width="200" HorizontalAlignment="Left" Height="40" Template="{StaticResource InputControlTemplate}"></TextBox>
+                <Button x:Name="botonUsuario" Grid.Column="2" Width="50" Height="40" FontSize="50" Margin="20,0,0,0" Style="{StaticResource BotonBasico}" Click="ActualizarUsuario" HorizontalAlignment="Left">
                     +
                 </Button>
             </Grid>
@@ -53,8 +53,8 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Width="135" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" >Correo principal:</TextBlock>
-                <TextBox Grid.Column="1" Text="Texto de ejemplo" Margin="44,0,0,0" Width="200" HorizontalAlignment="Left" Height="40" Template="{StaticResource InputControlTemplate}"></TextBox>
-                <Button Grid.Column="2" Width="50" Height="40" FontSize="50" Margin="20,0,0,0" Style="{StaticResource BotonBasico}" Click="ActualizarCorreoPrincipal">
+                <TextBox x:Name="CampoCorreoPrincipal" Grid.Column="1" Text="Texto de ejemplo" Margin="44,0,0,0" Width="200" HorizontalAlignment="Left" Height="40" Template="{StaticResource InputControlTemplate}"></TextBox>
+                <Button x:Name="botonCorreoPrincipal" Grid.Column="2" Width="50" Height="40" FontSize="50" Margin="20,0,0,0" Style="{StaticResource BotonBasico}" Click="ActualizarCorreoPrincipal">
                     +
                 </Button>
             </Grid>
@@ -69,8 +69,8 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Width="135" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" >Correo secundario:</TextBlock>
-                <TextBox Grid.Column="1" Text="Texto de ejemplo" Margin="44,0,0,0" Width="200" HorizontalAlignment="Left" Height="40" Template="{StaticResource InputControlTemplate}"></TextBox>
-                <Button Grid.Column="2" Width="50" Height="40" FontSize="50" Margin="20,0,0,0" Style="{StaticResource BotonBasico}" Click="ActualizarCorreoSecundario">
+                <TextBox x:Name="campoCorreoSecundario" Grid.Column="1" Text="Texto de ejemplo" Margin="44,0,0,0" Width="200" HorizontalAlignment="Left" Height="40" Template="{StaticResource InputControlTemplate}"></TextBox>
+                <Button x:Name="botonCorreoSecundario" Grid.Column="2" Width="50" Height="40" FontSize="50" Margin="20,0,0,0" Style="{StaticResource BotonBasico}" Click="ActualizarCorreoSecundario">
                     +
                 </Button>
             </Grid>
@@ -79,8 +79,8 @@
         <StackPanel  Grid.Row="5" Width="450" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 
             <TextBlock Grid.Column="0" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" >Estado:</TextBlock>
-            <TextBox Text="Texto de ejemplo" Margin="20,0,0,0" Width="309" Height="40" Template="{StaticResource InputControlTemplate}"/>
-            <Button Grid.Column="2" Width="50" Height="40" FontSize="50" Margin="20,0,0,0" Style="{StaticResource BotonBasico}" Click="ActualizarEstado">
+            <TextBox x:Name="campoEstado" Text="Texto de ejemplo" Margin="20,0,0,0" Width="309" Height="40" Template="{StaticResource InputControlTemplate}"/>
+            <Button x:Name="botonEstado" Grid.Column="2" Width="50" Height="40" FontSize="50" Margin="20,0,0,0" Style="{StaticResource BotonBasico}" Click="ActualizarEstado">
                 +
             </Button>
         </StackPanel>
