@@ -14,6 +14,7 @@ namespace TypeMeDesktop.ComunicacionAPI.Login
         public string FotoDePerfil { get; set; }
         public int Estatus { get; set; }
         public List<CorreoTyper> Correos { get; set; }
+        public List<ContraseniaTyper> Contrasenia { get; set; }
 
         public string ObtenerCorreoPrincipal()
         {
