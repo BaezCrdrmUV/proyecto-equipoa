@@ -42,7 +42,7 @@ namespace TypeMeDesktop.Ventanas
 
         private void ClickNuevoChat(object sender, RoutedEventArgs e)
         {
-
+            PaginaFrame.Navigate(new ListaDeContactos());
         }
 
         private void ClickNuevoContacto(object sender, RoutedEventArgs e)
