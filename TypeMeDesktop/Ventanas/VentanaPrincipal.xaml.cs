@@ -42,12 +42,12 @@ namespace TypeMeDesktop.Ventanas
 
         private void ClickNuevoChat(object sender, RoutedEventArgs e)
         {
-            PaginaFrame.Navigate(new ListaDeContactos());
+            PaginaFrame.Navigate(new ListaDeContactos(perfilTyper.IdTyper));
         }
 
         private void ClickNuevoContacto(object sender, RoutedEventArgs e)
         {
-            PaginaFrame.Navigate(new AgregarContacto());
+            PaginaFrame.Navigate(new AgregarContacto(perfilTyper.IdTyper));
         }
 
         private void ClickMiCuenta(object sender, RoutedEventArgs e)

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TypeMeDesktop.ComunicacionAPI.Contactos;
 
 namespace TypeMeDesktop.Paginas
 {
@@ -20,9 +21,13 @@ namespace TypeMeDesktop.Paginas
     /// </summary>
     public partial class ListaDeContactos : Page
     {
-        public ListaDeContactos()
+        private string idTyper;
+        private List<InfoContacto> listaDeContactosParaGrupo;
+
+        public ListaDeContactos(string idTyper)
         {
             InitializeComponent();
+            this.idTyper = idTyper;
         }
 
         private void ClickAgregarContacto(object sender, RoutedEventArgs e)

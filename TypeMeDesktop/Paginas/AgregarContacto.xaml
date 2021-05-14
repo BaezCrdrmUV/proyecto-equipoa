@@ -26,11 +26,11 @@
             <TextBlock Grid.Row="1" FontSize="15" Width="350" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center">Ingresa el nombre de usuario de la persona a la que quieres agregar</TextBlock>
 
             <TextBlock Grid.Row="2" FontSize="20" Width="300">Usuario</TextBlock>
-            <TextBox Grid.Row="3"  Width="300" Height="40" Template="{StaticResource InputControlTemplate}"></TextBox>
+            <TextBox Name="campoUsuario" Grid.Row="3"  Width="300" Height="40" Template="{StaticResource InputControlTemplate}"></TextBox>
         </Grid>
 
         <StackPanel Grid.Row="1">
-            <Button Width="300" Height="40" Style="{StaticResource BotonBasico}" Click="ClickAgregarContacto">
+            <Button x:Name="botonAgregar" Width="300" Height="40" Style="{StaticResource BotonBasico}" Click="ClickAgregarContacto">
                 Agregar contacto
             </Button>
         </StackPanel>

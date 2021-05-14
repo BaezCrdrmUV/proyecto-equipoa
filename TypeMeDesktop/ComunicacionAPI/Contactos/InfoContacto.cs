@@ -9,8 +9,8 @@ namespace TypeMeDesktop.ComunicacionAPI.Contactos
 {
     public class InfoContacto
     {
-        public bool bloqueado { get; set; }
-        public bool esFavorito { get; set; }
+        public string bloqueado { get; set; }
+        public string esFavorito { get; set; }
         public InformacionTyper contacto { get; set; }
     }
 }
