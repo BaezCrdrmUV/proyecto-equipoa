@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TypeMeDesktop.ComunicacionAPI.Contactos;
 using TypeMeDesktop.ComunicacionAPI.Login;
 using TypeMeDesktop.Paginas;
 
@@ -23,14 +26,19 @@ namespace TypeMeDesktop.Ventanas
     public partial class VentanaPrincipal : Window
     {
         private InformacionTyper perfilTyper;
+        private string urlListaDeContactos = "http://localhost:4000/typers/obtenerContactos/";
+        private List<InfoContacto> listaDeContactos;
+        private bool consultaContactosTerminada = false;
 
-        public VentanaPrincipal(InformacionTyper idTyper)
+        public VentanaPrincipal(InformacionTyper typer)
         {
-            this.perfilTyper = idTyper;
-
             InitializeComponent();
 
+            this.perfilTyper = typer;
             this.infoHeader.Text = perfilTyper.Username;
+            listaDeContactos = new List<InfoContacto>();
+
+            APIObtenerListaDeContactos();
 
 
             Random numeros = new Random();
@@ -42,7 +50,10 @@ namespace TypeMeDesktop.Ventanas
 
         private void ClickNuevoChat(object sender, RoutedEventArgs e)
         {
-            PaginaFrame.Navigate(new ListaDeContactos(perfilTyper.IdTyper));
+            if (TerminoConsulta() && HayContactos())
+            {
+                PaginaFrame.Navigate(new ListaDeContactos(listaDeContactos, perfilTyper.IdTyper));
+            }
         }
 
         private void ClickNuevoContacto(object sender, RoutedEventArgs e)
@@ -93,5 +104,58 @@ namespace TypeMeDesktop.Ventanas
 
             listaDeChats.Children.Add(nuevaPreviewChat);
         }
+
+        private bool HayContactos()
+        {
+            if (listaDeContactos.Count <= 0)
+            {
+                MessageBox.Show("No cuentas con contactos para iniciar un chat");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool TerminoConsulta()
+        {
+            bool termino = consultaContactosTerminada;
+            if (!termino)
+            {
+                MessageBox.Show("Espera a que se carguen tus contactos");
+                return termino;
+            }
+            return termino;
+        }
+
+        private async void APIObtenerListaDeContactos()
+        {
+            var cliente = new HttpClient();
+
+            try
+            {
+                var httpresponse = await cliente.GetAsync(String.Concat(urlListaDeContactos, perfilTyper.IdTyper));
+
+                if (httpresponse.IsSuccessStatusCode)
+                {
+                    var result = await httpresponse.Content.ReadAsStringAsync();
+                    var infoContactos = JsonConvert.DeserializeObject<RespuestaAPI>(result);
+
+                    if (bool.Parse(infoContactos.status))
+                    {
+                        listaDeContactos = infoContactos.result;
+                    }
+                }
+                consultaContactosTerminada = true;
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show("ocurrio un error en la conexion");
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show("ocurrio un error en la conexion");
+            }
+        }
+
     }
 }

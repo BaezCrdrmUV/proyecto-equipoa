@@ -26,15 +26,20 @@
         </Grid>
 
         <StackPanel Grid.Row="1">
-            <DataGrid Name="tablaDeContactos" CanUserAddRows="False" Height="300" Width="340" Margin="20" Background="Transparent" RowBackground="Transparent" AutoGenerateColumns="false" FontFamily="Se">
+            <DataGrid Name="tablaDeContactos" GridLinesVisibility="None" CanUserAddRows="false" Height="300" Width="350" Margin="20" Background="Transparent" RowBackground="Transparent" AutoGenerateColumns="False" FontFamily="Se">
+                <DataGrid.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
+                   Color="red"/>
+                </DataGrid.Resources>
+                
                 <DataGrid.Columns>
 
-                    <DataGridTextColumn MinWidth="200" IsReadOnly="True" Header="Contacto" Binding="{Binding Nombre}"/>
+                    <DataGridTextColumn MinWidth="200" IsReadOnly="True" CanUserResize="False" Header="Contacto" Binding="{Binding Username}" CellStyle="{StaticResource DataGridContentCellCentering}"/>
 
-                    <DataGridTemplateColumn  Width ="142" MinWidth="100" CanUserResize="False" IsReadOnly="True" CanUserReorder="False">
+                    <DataGridTemplateColumn Width ="150" MinWidth="120" CanUserResize="False" IsReadOnly="True" CanUserReorder="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="Agregar" Width ="100" MinWidth="100" HorizontalAlignment="Left" Click="ClickAgregarContacto"/>
+                                <Button Content="Agregar" FontSize="15" Width ="auto" Height="30" MinWidth="100" HorizontalAlignment="Left" Click="ClickAgregarContacto" Style="{StaticResource BotonBasico}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -43,7 +48,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="2">
-            <Button x:Name="botonCrearGrupo" Width="300" Margin="0,15,0,0" Style="{StaticResource BotonBasico}" Click="ClickCrearGrupo">Crear grupo</Button>
+            <Button x:Name="botonCrearGrupo" Width="300" Height="35" Margin="0,15,0,0" Style="{StaticResource BotonBasico}" Click="ClickCrearGrupo">Crear grupo</Button>
         </StackPanel>
     </Grid>
 </Page>

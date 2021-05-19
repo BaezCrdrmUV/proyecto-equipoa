@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TypeMeDesktop.ComunicacionAPI.Contactos
+namespace TypeMeDesktop.ComunicacionAPI.Mensajes
 {
-    public class RespuestaAPI
+    public class RespuestaCreacionGrupo
     {
         public string status { get; set; }
         public string message { get; set; }
-        public List<InfoContacto> result { get; set; }
+        public InfoGrupo result { get; set; }
     }
 }

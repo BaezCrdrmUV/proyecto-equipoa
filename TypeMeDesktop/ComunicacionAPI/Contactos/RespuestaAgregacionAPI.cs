@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace TypeMeDesktop.ComunicacionAPI.Contactos
 {
-    public class RespuestaAPI
+    class RespuestaAgregacionAPI
     {
         public string status { get; set; }
         public string message { get; set; }
-        public List<InfoContacto> result { get; set; }
+        public InfoContacto result { get; set; }
     }
 }

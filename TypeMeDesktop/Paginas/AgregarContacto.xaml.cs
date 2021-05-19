@@ -85,7 +85,7 @@ namespace TypeMeDesktop.Paginas
                 if (httpresponse.IsSuccessStatusCode)
                 {
                     var result = await httpresponse.Content.ReadAsStringAsync();
-                    var infoRegistro = JsonConvert.DeserializeObject<RespuestaAPI>(result);
+                    var infoRegistro = JsonConvert.DeserializeObject<RespuestaAgregacionAPI>(result);
 
                     if (bool.Parse(infoRegistro.status))
                     {
