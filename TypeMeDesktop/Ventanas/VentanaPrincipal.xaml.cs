@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TypeMeDesktop.ComunicacionAPI.Contactos;
 using TypeMeDesktop.ComunicacionAPI.Login;
+using TypeMeDesktop.ComunicacionAPI.Mensajes;
 using TypeMeDesktop.Paginas;
 
 namespace TypeMeDesktop.Ventanas
@@ -27,7 +28,10 @@ namespace TypeMeDesktop.Ventanas
     {
         private InformacionTyper perfilTyper;
         private string urlListaDeContactos = "http://localhost:4000/typers/obtenerContactos/";
+        private string urlListaDeGrupos = "http://localhost:4000/mensajes/misGrupos/";
+
         private List<InfoContacto> listaDeContactos;
+        private List<InfoGrupo> listaDeGrupos;
         private bool consultaContactosTerminada = false;
 
         public VentanaPrincipal(InformacionTyper typer)
@@ -39,13 +43,7 @@ namespace TypeMeDesktop.Ventanas
             listaDeContactos = new List<InfoContacto>();
 
             APIObtenerListaDeContactos();
-
-
-            Random numeros = new Random();
-            for (int i = 0; i < 10; i++)
-            {
-                CrearPreviewDeChat(numeros.Next().ToString());
-            }
+            APIObtenerListaDeGrupos();
         }
 
         private void ClickNuevoChat(object sender, RoutedEventArgs e)
@@ -66,7 +64,7 @@ namespace TypeMeDesktop.Ventanas
             PaginaFrame.Navigate(new MiPerfil(perfilTyper));
         }
 
-        private void CrearPreviewDeChat(string identificador)
+        private void CrearPreviewDeChat(InfoGrupo grupo)
         {
 
             Style style = this.FindResource("botonChat") as Style;
@@ -82,24 +80,24 @@ namespace TypeMeDesktop.Ventanas
             imagenPerfil.Height = 60;
             imagenPerfil.Width = 60;
             ImageBrush imagen = new ImageBrush();
-            imagen.ImageSource = new BitmapImage(new Uri("C:\\Users\\Angel\\Desktop\\Exportacion\\3.jpg"));
+            imagen.ImageSource = new BitmapImage(new Uri("C:\\Users\\Angel\\Desktop\\Exportacion\\3.png"));
             imagenPerfil.Fill = imagen;
 
-            TextBlock nombreContacto = new TextBlock();
-            nombreContacto.Text = "Angel de jesus juarez Garcia - " + identificador; //Aqui se toma del json
-            nombreContacto.VerticalAlignment = VerticalAlignment.Center;
-            nombreContacto.Margin = new Thickness(15, 0, 0, 0);
-            nombreContacto.TextWrapping = TextWrapping.Wrap;
-            nombreContacto.Width = 150;
+            TextBlock nombreGrupo = new TextBlock();
+            nombreGrupo.Text = grupo.Nombre; 
+            nombreGrupo.VerticalAlignment = VerticalAlignment.Center;
+            nombreGrupo.Margin = new Thickness(15, 0, 0, 0);
+            nombreGrupo.TextWrapping = TextWrapping.Wrap;
+            nombreGrupo.Width = 150;
 
 
             preview.Children.Add(imagenPerfil);
-            preview.Children.Add(nombreContacto);
+            preview.Children.Add(nombreGrupo);
             nuevaPreviewChat.Content = preview;
 
             nuevaPreviewChat.Click += (s, ev) =>
             {
-                MessageBox.Show(nombreContacto.Text);
+                MessageBox.Show(nombreGrupo.Text); //Aqui se realiza la navegacion hacia la ventana de chat
             };
 
             listaDeChats.Children.Add(nuevaPreviewChat);
@@ -157,5 +155,38 @@ namespace TypeMeDesktop.Ventanas
             }
         }
 
+        private async void APIObtenerListaDeGrupos()
+        {
+            var cliente = new HttpClient();
+
+            try
+            {
+                var httpresponse = await cliente.GetAsync(String.Concat(urlListaDeGrupos, perfilTyper.IdTyper));
+
+                if (httpresponse.IsSuccessStatusCode)
+                {
+                    var result = await httpresponse.Content.ReadAsStringAsync();
+                    var infoContactos = JsonConvert.DeserializeObject<RespuestaListaDeGrupos>(result);
+
+                    if (bool.Parse(infoContactos.status))
+                    {
+                        listaDeGrupos = infoContactos.result;
+                    }
+
+                    foreach (InfoGrupo grupo in listaDeGrupos)
+                    {
+                        CrearPreviewDeChat(grupo);
+                    }
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show("ocurrio un error en la conexion");
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show("ocurrio un error en la conexion");
+            }
+        }
     }
 }
