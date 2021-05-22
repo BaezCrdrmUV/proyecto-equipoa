@@ -68,9 +68,7 @@ services:
         - "mysql_typers"
     ports:
         - "3324:80"
-    build: 
-        context: ../MSTypers/
-        dockerfile: Dockerfile
+    build: https://github.com/BaezCrdrmUV/proyecto-equipoa.git#MSTypers
     environment: 
         DB_CONNECTION_STRING: "server=mysql_typers;user=adminTypers;password=proyecto2021;database=Typers"
 
@@ -80,9 +78,7 @@ services:
         - "mysql_multimedia"
     ports:
         - "3325:80"
-    build: 
-        context: ../MSMultimedia/
-        dockerfile: Dockerfile
+    build: https://github.com/BaezCrdrmUV/proyecto-equipoa.git#MSMultimedia
     environment: 
         DB_CONNECTION_STRING: "server=mysql_multimedia;user=adminMultimedia;password=proyecto2021;database=Multimedias"
 
@@ -92,9 +88,7 @@ services:
       - "mysql_mensajes"
     ports:
       - "3326:80"
-    build: 
-      context: ..\MSMensajes\
-      dockerfile: Dockerfile
+    build: https://github.com/BaezCrdrmUV/proyecto-equipoa.git#MSMensajes
     environment: 
       DB_CONNECTION_STRING: "server=mysql_mensajes;user=adminMensajes;password=proyecto2021;database=Mensajes"
 
@@ -104,21 +98,27 @@ services:
       - "mongo_contactos"
     ports: 
       - "3327:5000"
-    build: 
-      context: ..\MSContactos\
-      dockerfile: Dockerfile
+    build: https://github.com/BaezCrdrmUV/proyecto-equipoa.git#MSContactos
     environment: 
       FLASK_ENV: production
       FLASK_APP: src/app.py
       FLASK_RUN_HOST: 0.0.0.0
       MONGO_URI: mongodb://adminContactos:proyecto2021@mongo_contactos/contactos
 
+  apigateway:
+    image: apigateway
+    ports: 
+      - "4000:4000"
+    build: https://github.com/BaezCrdrmUV/proyecto-equipoa.git#apigateway
+    environment:
+      URL_MS_TYPERS: http://ms_typers
+      URL_MS_MULTIMEDIA: http://ms_multimedia
+      URL_MS_MENSAJES: http://ms_mensajes
+      URL_MS_CONTACTOS: http://ms_contactos
+    container_name: apigateway
+
 # volumes:
 #   db_volume_typers:
 #   db_volume_contactos:
 #   db_volume_mensajes:
 #   db_volume_multimedia:
-
-# networks: 
-#   backend:
-#     driver: bridge
