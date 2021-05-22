@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="270"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="690"/>
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Row="0" Grid.Column="0" Background="#D30000">
@@ -36,7 +36,7 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <Button Grid.Row="1" Width="200" Height="40" Style="{StaticResource BotonBasico}" Click="ClickNuevoChat">
+            <Button x:Name="botonChat" Grid.Row="1" Width="200" Height="40" Style="{StaticResource BotonBasico}" Click="ClickNuevoChat">
                 Nuevo chat
             </Button>
 
@@ -50,7 +50,7 @@
         </StackPanel>
 
 
-        <Frame  Grid.Row="1" Grid.Column="1"  x:Name="PaginaFrame" NavigationUIVisibility="Hidden"/>
+        <Frame  Grid.Row="1" Grid.Column="1" Width="690"  x:Name="PaginaFrame" NavigationUIVisibility="Hidden"/>
 
     </Grid>
 

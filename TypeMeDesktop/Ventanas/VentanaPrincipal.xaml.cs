@@ -31,8 +31,6 @@ namespace TypeMeDesktop.Ventanas
         private string urlListaDeGrupos = "http://localhost:4000/mensajes/misGrupos/";
 
         private List<InfoContacto> listaDeContactos;
-        private List<InfoGrupo> listaDeGrupos;
-        private bool consultaContactosTerminada = false;
 
         public VentanaPrincipal(InformacionTyper typer)
         {
@@ -41,6 +39,8 @@ namespace TypeMeDesktop.Ventanas
             this.perfilTyper = typer;
             this.infoHeader.Text = perfilTyper.Username;
             listaDeContactos = new List<InfoContacto>();
+            PaginaFrame.Navigate(new Bienvenida());
+            botonChat.IsEnabled = false;
 
             APIObtenerListaDeContactos();
             APIObtenerListaDeGrupos();
@@ -48,7 +48,7 @@ namespace TypeMeDesktop.Ventanas
 
         private void ClickNuevoChat(object sender, RoutedEventArgs e)
         {
-            if (TerminoConsulta() && HayContactos())
+            if (HayContactos())
             {
                 PaginaFrame.Navigate(new ListaDeContactos(listaDeContactos, perfilTyper.IdTyper));
             }
@@ -97,7 +97,7 @@ namespace TypeMeDesktop.Ventanas
 
             nuevaPreviewChat.Click += (s, ev) =>
             {
-                MessageBox.Show(nombreGrupo.Text); //Aqui se realiza la navegacion hacia la ventana de chat
+                PaginaFrame.Navigate(new ChatGrupal(grupo.IdGrupo, perfilTyper)); 
             };
 
             listaDeChats.Children.Add(nuevaPreviewChat);
@@ -112,17 +112,6 @@ namespace TypeMeDesktop.Ventanas
             }
 
             return true;
-        }
-
-        private bool TerminoConsulta()
-        {
-            bool termino = consultaContactosTerminada;
-            if (!termino)
-            {
-                MessageBox.Show("Espera a que se carguen tus contactos");
-                return termino;
-            }
-            return termino;
         }
 
         private async void APIObtenerListaDeContactos()
@@ -143,15 +132,15 @@ namespace TypeMeDesktop.Ventanas
                         listaDeContactos = infoContactos.result;
                     }
                 }
-                consultaContactosTerminada = true;
+                botonChat.IsEnabled = true;
             }
             catch (InvalidOperationException)
             {
-                MessageBox.Show("ocurrio un error en la conexion");
+                MessageBox.Show("ocurrio un error en la conexion al obtener los contactos");
             }
             catch (HttpRequestException)
             {
-                MessageBox.Show("ocurrio un error en la conexion");
+                MessageBox.Show("ocurrio un error en la conexion al obtener los contactos");
             }
         }
 
@@ -166,26 +155,27 @@ namespace TypeMeDesktop.Ventanas
                 if (httpresponse.IsSuccessStatusCode)
                 {
                     var result = await httpresponse.Content.ReadAsStringAsync();
-                    var infoContactos = JsonConvert.DeserializeObject<RespuestaListaDeGrupos>(result);
+                    var infoGrupos = JsonConvert.DeserializeObject<RespuestaListaDeGrupos>(result);
 
-                    if (bool.Parse(infoContactos.status))
+                    if (bool.Parse(infoGrupos.status))
                     {
-                        listaDeGrupos = infoContactos.result;
-                    }
-
-                    foreach (InfoGrupo grupo in listaDeGrupos)
-                    {
-                        CrearPreviewDeChat(grupo);
+                        if (infoGrupos.result.Count != 0)
+                        {
+                            foreach (InfoGrupo grupo in infoGrupos.result)
+                            {
+                                CrearPreviewDeChat(grupo);
+                            }
+                        }
                     }
                 }
             }
             catch (InvalidOperationException)
             {
-                MessageBox.Show("ocurrio un error en la conexion");
+                MessageBox.Show("ocurrio un error en la conexion al obtener los grupos del typer");
             }
             catch (HttpRequestException)
             {
-                MessageBox.Show("ocurrio un error en la conexion");
+                MessageBox.Show("ocurrio un error en la conexion al obtener los grupos del typer");
             }
         }
     }

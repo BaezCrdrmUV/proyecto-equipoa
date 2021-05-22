@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="TypeMeDesktop.Recursos.ControlMensaje"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TypeMeDesktop.Recursos"
+             mc:Ignorable="d" 
+             Background="White"
+             d:DesignHeight="150" d:DesignWidth="350" Height="150" Width="350">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="autorDeMensaje" FontSize="15" Margin="10,0,0,0" Grid.Row="0" ></TextBlock>
+        <TextBlock x:Name="contenidoDeMensaje" FontSize="15" Margin="10,0,0,0" TextWrapping="Wrap" Grid.Row="1" >
+
+        </TextBlock>
+        <TextBlock Name="horaDeMensaje" FontSize="15" Margin="10,0,0,0" Grid.Row="2" ></TextBlock>
+    </Grid>
+</UserControl>

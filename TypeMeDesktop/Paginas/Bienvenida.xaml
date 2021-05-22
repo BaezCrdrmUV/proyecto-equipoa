@@ -1,0 +1,15 @@
+﻿<Page x:Class="TypeMeDesktop.Paginas.Bienvenida"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TypeMeDesktop.Paginas"
+      mc:Ignorable="d" 
+      d:DesignHeight="540" d:DesignWidth="690" Background="White"
+      Title="Bienvenida">
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Image Source="D:\Repositorios\TypeMe\TypeMeDesktop\TypeMeDesktop\Recursos\Logo.png" Width="200"></Image>
+        <TextBlock FontSize="30" >Bienvenido a TypeMe</TextBlock>
+    </StackPanel>
+</Page>
