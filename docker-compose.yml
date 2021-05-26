@@ -114,7 +114,7 @@ services:
       URL_MS_TYPERS: http://ms_typers
       URL_MS_MULTIMEDIA: http://ms_multimedia
       URL_MS_MENSAJES: http://ms_mensajes
-      URL_MS_CONTACTOS: http://ms_contactos
+      URL_MS_CONTACTOS: http://ms_contactos:5000
     container_name: apigateway
 
 # volumes:
