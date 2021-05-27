@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:TypeMeDesktop.Ventanas"
         mc:Ignorable="d"
         ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
         Title="RegistroDeGrupo" Height="600" Width="400">
     <Grid>
         <Grid.RowDefinitions>

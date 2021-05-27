@@ -28,18 +28,23 @@ namespace TypeMeDesktop.Paginas
     public partial class ListaDeContactos : Page
     {
         private string urlRegistroGrupo = "http://localhost:4000/mensajes/crearGrupo";
+        private string urlListaDeContactos = "http://localhost:4000/typers/obtenerContactos/";
         private string idTyper;
         public List<InformacionTyper> listaDeNuevoGrupo;
         public List<string> listaDeNombresGrupo;
         public List<InformacionTyper> listaDeContactosOriginal;
         public ObservableCollection<InformacionTyper> listaDeContactosObservable;
+        private List<InfoContacto> listaDeContactos;
 
-        public ListaDeContactos(List<InfoContacto> listaDeContactos, string idTyper)
+        private VentanaPrincipal miVentana;
+
+        public ListaDeContactos(string idTyper, VentanaPrincipal miVentana)
         {
             InitializeComponent();
             this.idTyper = idTyper;
-            listaDeContactosOriginal = ObtenerListaDeContactos(listaDeContactos);
-            ResetVentana();
+            this.miVentana = miVentana;
+            APIObtenerListaDeContactos();
+            
         }
 
         public void ResetVentana()
@@ -73,24 +78,27 @@ namespace TypeMeDesktop.Paginas
 
         private void ClickCrearGrupo(object sender, RoutedEventArgs e)
         {
-            RegistroDeGrupo ventanaRegistro = new RegistroDeGrupo(listaDeNombresGrupo);
-            ventanaRegistro.ShowDialog();
-            if (ventanaRegistro.DialogResult == true)
+            if (listaDeNuevoGrupo.Count > 1)
             {
-                RegistroNuevoGrupo nuevoGrupo = new RegistroNuevoGrupo()
+                RegistroDeGrupo ventanaRegistro = new RegistroDeGrupo(listaDeNombresGrupo);
+                ventanaRegistro.ShowDialog();
+                if (ventanaRegistro.DialogResult == true)
                 {
-                    nombre = ventanaRegistro.NombreDelGrupo,
-                    descripcion = ventanaRegistro.DescripcionDelGrupo,
-                    perteneces = listaDeNuevoGrupo
-                };
+                    RegistroNuevoGrupo nuevoGrupo = new RegistroNuevoGrupo()
+                    {
+                        nombre = ventanaRegistro.NombreDelGrupo,
+                        descripcion = ventanaRegistro.DescripcionDelGrupo,
+                        perteneces = listaDeNuevoGrupo
+                    };
 
-                APICrearGrupo(nuevoGrupo);
+                    APICrearGrupo(nuevoGrupo);
+                }
 
                 ResetVentana();
             }
             else
             {
-                ResetVentana();
+                MessageBox.Show("Debes seleccionar minimo un integrante para crear un grupo");
             }
         }
 
@@ -112,7 +120,7 @@ namespace TypeMeDesktop.Paginas
 
                     if (bool.Parse(infoRegistro.status))
                     {
-                        MessageBox.Show(infoRegistro.message);
+                        miVentana.APIObtenerListaDeGrupos();
                     }
                     else
                     {
@@ -127,6 +135,41 @@ namespace TypeMeDesktop.Paginas
             catch (HttpRequestException)
             {
                 MessageBox.Show("ocurrio un error en la conexion");
+            }
+        }
+
+        private async void APIObtenerListaDeContactos()
+        {
+            var cliente = new HttpClient();
+
+            try
+            {
+                var httpresponse = await cliente.GetAsync(String.Concat(urlListaDeContactos, idTyper));
+
+                if (httpresponse.IsSuccessStatusCode)
+                {
+                    var result = await httpresponse.Content.ReadAsStringAsync();
+                    var infoContactos = JsonConvert.DeserializeObject<RespuestaAPI>(result);
+
+                    if (bool.Parse(infoContactos.status))
+                    {
+                            listaDeContactos = infoContactos.result;
+                            listaDeContactosOriginal = ObtenerListaDeContactos(listaDeContactos);
+                            ResetVentana();   
+                    }
+                    else
+                    {
+                        MessageBox.Show("No cuentas con contactos en este momento");
+                    }
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show("ocurrio un error en la conexion al obtener los contactos");
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show("ocurrio un error en la conexion al obtener los contactos");
             }
         }
     }

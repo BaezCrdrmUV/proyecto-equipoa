@@ -27,10 +27,7 @@ namespace TypeMeDesktop.Ventanas
     public partial class VentanaPrincipal : Window
     {
         private InformacionTyper perfilTyper;
-        private string urlListaDeContactos = "http://localhost:4000/typers/obtenerContactos/";
         private string urlListaDeGrupos = "http://localhost:4000/mensajes/misGrupos/";
-
-        private List<InfoContacto> listaDeContactos;
 
         public VentanaPrincipal(InformacionTyper typer)
         {
@@ -38,20 +35,14 @@ namespace TypeMeDesktop.Ventanas
 
             this.perfilTyper = typer;
             this.infoHeader.Text = perfilTyper.Username;
-            listaDeContactos = new List<InfoContacto>();
             PaginaFrame.Navigate(new Bienvenida());
-            botonChat.IsEnabled = false;
 
-            APIObtenerListaDeContactos();
             APIObtenerListaDeGrupos();
         }
 
         private void ClickNuevoChat(object sender, RoutedEventArgs e)
         {
-            if (HayContactos())
-            {
-                PaginaFrame.Navigate(new ListaDeContactos(listaDeContactos, perfilTyper.IdTyper));
-            }
+            PaginaFrame.Navigate(new ListaDeContactos(perfilTyper.IdTyper, this));
         }
 
         private void ClickNuevoContacto(object sender, RoutedEventArgs e)
@@ -80,7 +71,7 @@ namespace TypeMeDesktop.Ventanas
             imagenPerfil.Height = 60;
             imagenPerfil.Width = 60;
             ImageBrush imagen = new ImageBrush();
-            imagen.ImageSource = new BitmapImage(new Uri("C:\\Users\\Angel\\Desktop\\Exportacion\\3.png"));
+            imagen.ImageSource = new BitmapImage(new Uri("C:\\Users\\Angel\\Desktop\\Exportacion\\4.png"));
             imagenPerfil.Fill = imagen;
 
             TextBlock nombreGrupo = new TextBlock();
@@ -103,48 +94,7 @@ namespace TypeMeDesktop.Ventanas
             listaDeChats.Children.Add(nuevaPreviewChat);
         }
 
-        private bool HayContactos()
-        {
-            if (listaDeContactos.Count <= 0)
-            {
-                MessageBox.Show("No cuentas con contactos para iniciar un chat");
-                return false;
-            }
-
-            return true;
-        }
-
-        private async void APIObtenerListaDeContactos()
-        {
-            var cliente = new HttpClient();
-
-            try
-            {
-                var httpresponse = await cliente.GetAsync(String.Concat(urlListaDeContactos, perfilTyper.IdTyper));
-
-                if (httpresponse.IsSuccessStatusCode)
-                {
-                    var result = await httpresponse.Content.ReadAsStringAsync();
-                    var infoContactos = JsonConvert.DeserializeObject<RespuestaAPI>(result);
-
-                    if (bool.Parse(infoContactos.status))
-                    {
-                        listaDeContactos = infoContactos.result;
-                    }
-                }
-                botonChat.IsEnabled = true;
-            }
-            catch (InvalidOperationException)
-            {
-                MessageBox.Show("ocurrio un error en la conexion al obtener los contactos");
-            }
-            catch (HttpRequestException)
-            {
-                MessageBox.Show("ocurrio un error en la conexion al obtener los contactos");
-            }
-        }
-
-        private async void APIObtenerListaDeGrupos()
+        public async void APIObtenerListaDeGrupos()
         {
             var cliente = new HttpClient();
 
@@ -161,6 +111,7 @@ namespace TypeMeDesktop.Ventanas
                     {
                         if (infoGrupos.result.Count != 0)
                         {
+                            listaDeChats.Children.Clear();
                             foreach (InfoGrupo grupo in infoGrupos.result)
                             {
                                 CrearPreviewDeChat(grupo);

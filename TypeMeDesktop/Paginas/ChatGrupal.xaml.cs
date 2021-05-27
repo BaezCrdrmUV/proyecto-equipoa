@@ -50,7 +50,10 @@ namespace TypeMeDesktop.Paginas
 
         private void ClickMultimedia(object sender, RoutedEventArgs e)
         {
-
+            //Aqui se obtiene el stream
+            //se bloquea el cuadro de texto
+            //Se llama a la api de imagenes se le puede pasar el stream de bytes
+            //Se muestra una preview
         }
 
         private void InsertarMensaje(Mensaje nuevo)
