@@ -1,8 +1,60 @@
+import fs from 'fs';
 import express from 'express';
 import {microservicioTypers} from '../clients/http/typer.js';
 import {microservicioContactos} from '../clients/http/contactos.js';
+import { microservicioMultimedia } from '../clients/http/multimedia.js';
+
+var folderPath = process.cwd() + "/archivosTemporales/";
+fs.mkdir(folderPath, null, function (err) {
+    if (err) {
+        
+    }
+})
 
 const router = express.Router();
+
+router.post("/ActualizarImagenPerfil", async (req, res) => {
+    var idTyper = req.query.idTyper;
+    var { file }  = req.files;
+    var filePath = folderPath + file.name;
+
+    fs.writeFile(filePath, file.data, function (err) {
+        if (err) {
+            res.send(err);
+        }else{
+            microservicioMultimedia.RegistrarMultimedia(filePath, idTyper)
+            .then(response => {
+                let rutaImagenPerfil = microservicioMultimedia.obtenerMultimedia(response.data.result.IdMultimedia);
+                
+                let actualizacion = {
+                    IdentificadorTyper : idTyper,
+                    InformacionActualizada : rutaImagenPerfil,
+                    ModificadorDeMetodo : "fotoDePerfil"
+                }
+
+                microservicioTypers.ActualizarInfoDeUsuario(actualizacion)
+                .then(values => {
+                    let resultado = {
+                        status: values.status,
+                        message: values.data.message,
+                        result: values.data.result
+                    }
+                    res.send(resultado);
+                })
+                .catch(error => {
+                    ressend("typers/actualizarInfoTyper", error);
+                })
+            })
+            .catch(error => {
+                res.send(error);
+            }).finally(() => {
+                fs.unlink(filePath, function (err) {
+                    if (err) console.log(err);
+                });
+            })
+        }
+    })
+})
 
 router.post("/registrarTyper", async (req, res) => {
 
