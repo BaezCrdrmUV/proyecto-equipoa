@@ -9,7 +9,7 @@ namespace TypeMeDesktop.ComunicacionAPI.Mensajes
 {
     public class InfoGrupo
     {
-        public string IdGrupo { get; set; }
+        public int IdGrupo { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public string FechaCreacion { get; set; }

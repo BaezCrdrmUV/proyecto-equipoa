@@ -23,7 +23,7 @@
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
 
-            <Image Source="../Recursos/Logo.png"></Image>
+            <Image Source="/Recursos/Logo.png"/>
 
             <TextBlock Grid.Row="1" FontSize="20" Width="300">Usuario</TextBlock>
             <TextBox x:Name="usuario" Grid.Row="2"  Width="300" Height="40" Template="{StaticResource InputControlTemplate}"></TextBox>

@@ -20,7 +20,7 @@
 
         <Ellipse Grid.Row="0" Width="180" Height="180">
             <Ellipse.Fill>
-                <ImageBrush x:Name="fotoDePerfil" ImageSource="C:\Users\Angel\Desktop\Exportacion\3.jpg" />
+                <ImageBrush x:Name="fotoDePerfil" ImageSource="C:\Users\Angel\Desktop\Exportacion\5.png" />
             </Ellipse.Fill>
         </Ellipse>
 

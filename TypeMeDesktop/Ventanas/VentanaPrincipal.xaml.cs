@@ -1,20 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TypeMeDesktop.ComunicacionAPI.Contactos;
 using TypeMeDesktop.ComunicacionAPI.Login;
 using TypeMeDesktop.ComunicacionAPI.Mensajes;
 using TypeMeDesktop.Paginas;
@@ -28,30 +22,90 @@ namespace TypeMeDesktop.Ventanas
     {
         private InformacionTyper perfilTyper;
         private string urlListaDeGrupos = "http://localhost:4000/mensajes/misGrupos/";
+        private HubConnection _conexion;
+        private Dictionary<int, Ellipse> notificaciones;
+        private int idGrupoAbiertoActual = 0;
 
         public VentanaPrincipal(InformacionTyper typer)
         {
             InitializeComponent();
 
+            notificaciones = new Dictionary<int, Ellipse>();
             this.perfilTyper = typer;
             this.infoHeader.Text = perfilTyper.Username;
             PaginaFrame.Navigate(new Bienvenida());
 
             APIObtenerListaDeGrupos();
+            ConectarAHub();
+
+        }
+
+        public async void ConectarAHub()
+        {
+            _conexion = new HubConnectionBuilder().WithUrl("http://localhost:5000/chatHub").Build();
+            _conexion.Closed += async (error) =>
+            {
+                await Task.Delay(new Random().Next(0, 5) * 1000);
+                await _conexion.StartAsync();
+            };
+
+            _conexion.On<Mensaje>("RecibirMensaje", (mensajeRecibido) =>
+            {
+                this.Dispatcher.Invoke(() => {
+                    if (mensajeRecibido.IdGrupo == idGrupoAbiertoActual)
+                    {
+                        ChatGrupal chatActual = (ChatGrupal)PaginaFrame.Content;
+                        chatActual.InsertarMensaje(mensajeRecibido);
+                    }
+                    else
+                    {
+                        if (notificaciones.ContainsKey(mensajeRecibido.IdGrupo))
+                        {
+                            Ellipse notificacionActiva;
+                            notificaciones.TryGetValue(mensajeRecibido.IdGrupo, out notificacionActiva);
+                            notificacionActiva.Visibility = Visibility.Visible;
+                        }
+                    }
+                });
+            });
+
+            try
+            {
+                await _conexion.StartAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        public async Task EnviarMensaje(Mensaje nuevoMensaje)
+        {
+            try
+            {
+                await _conexion.InvokeAsync("EnviarMensaje", nuevoMensaje);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void ClickNuevoChat(object sender, RoutedEventArgs e)
         {
+            idGrupoAbiertoActual = 0;
             PaginaFrame.Navigate(new ListaDeContactos(perfilTyper.IdTyper, this));
         }
 
         private void ClickNuevoContacto(object sender, RoutedEventArgs e)
         {
+            idGrupoAbiertoActual = 0;
             PaginaFrame.Navigate(new AgregarContacto(perfilTyper.IdTyper));
         }
 
         private void ClickMiCuenta(object sender, RoutedEventArgs e)
         {
+            idGrupoAbiertoActual = 0;
             PaginaFrame.Navigate(new MiPerfil(perfilTyper));
         }
 
@@ -79,16 +133,30 @@ namespace TypeMeDesktop.Ventanas
             nombreGrupo.VerticalAlignment = VerticalAlignment.Center;
             nombreGrupo.Margin = new Thickness(15, 0, 0, 0);
             nombreGrupo.TextWrapping = TextWrapping.Wrap;
-            nombreGrupo.Width = 150;
+            nombreGrupo.Width = 130;
+
+            Ellipse notificacion = new Ellipse();
+            notificacion.Height = 10;
+            notificacion.Width = 10;
+            notificacion.Margin = new Thickness(10, 0, 0, 0);
+            notificacion.Fill = new SolidColorBrush(Colors.Red);
+            notificacion.Visibility = Visibility.Hidden;
+            notificaciones.Add(grupo.IdGrupo, notificacion);
 
 
             preview.Children.Add(imagenPerfil);
             preview.Children.Add(nombreGrupo);
+            preview.Children.Add(notificacion);
             nuevaPreviewChat.Content = preview;
 
             nuevaPreviewChat.Click += (s, ev) =>
             {
-                PaginaFrame.Navigate(new ChatGrupal(grupo.IdGrupo, perfilTyper)); 
+                Ellipse notificacionActiva;
+                notificaciones.TryGetValue(grupo.IdGrupo, out notificacionActiva);
+                notificacionActiva.Visibility = Visibility.Hidden;
+                idGrupoAbiertoActual = grupo.IdGrupo;
+
+                PaginaFrame.Navigate(new ChatGrupal(grupo.IdGrupo, perfilTyper, this)); 
             };
 
             listaDeChats.Children.Add(nuevaPreviewChat);

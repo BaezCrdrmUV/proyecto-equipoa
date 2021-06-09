@@ -9,11 +9,11 @@ namespace TypeMeDesktop.ComunicacionAPI.Mensajes
 {
     public class Mensaje
     {
-        public string IdMensaje { get; set; }
+        public int IdMensaje { get; set; }
         public string Contenido { get; set; }
         public DateTime Fecha { get; set; }
         public TimeSpan Hora { get; set; }
-        public string IdGrupo { get; set; }
+        public int IdGrupo { get; set; }
         public InformacionTyper Typer { get; set; }
         public string IdMultimedia { get; set; }
     }
