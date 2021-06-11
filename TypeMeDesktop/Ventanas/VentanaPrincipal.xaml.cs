@@ -93,18 +93,21 @@ namespace TypeMeDesktop.Ventanas
 
         private void ClickNuevoChat(object sender, RoutedEventArgs e)
         {
+            this.infoHeader.Text = "Crear nuevo chat";
             idGrupoAbiertoActual = 0;
-            PaginaFrame.Navigate(new ListaDeContactos(perfilTyper.IdTyper, this));
+            PaginaFrame.Navigate(new TypeMeDesktop.Paginas.ListaDeContactos(perfilTyper.IdTyper, this));
         }
 
         private void ClickNuevoContacto(object sender, RoutedEventArgs e)
         {
+            this.infoHeader.Text = "Agregar nuevo contacto";
             idGrupoAbiertoActual = 0;
             PaginaFrame.Navigate(new AgregarContacto(perfilTyper.IdTyper));
         }
 
         private void ClickMiCuenta(object sender, RoutedEventArgs e)
         {
+            this.infoHeader.Text = perfilTyper.Username;
             idGrupoAbiertoActual = 0;
             PaginaFrame.Navigate(new MiPerfil(perfilTyper));
         }
@@ -151,6 +154,7 @@ namespace TypeMeDesktop.Ventanas
 
             nuevaPreviewChat.Click += (s, ev) =>
             {
+                this.infoHeader.Text = grupo.Nombre;
                 Ellipse notificacionActiva;
                 notificaciones.TryGetValue(grupo.IdGrupo, out notificacionActiva);
                 notificacionActiva.Visibility = Visibility.Hidden;
@@ -196,6 +200,13 @@ namespace TypeMeDesktop.Ventanas
             {
                 MessageBox.Show("ocurrio un error en la conexion al obtener los grupos del typer");
             }
+        }
+
+        private void ClickCerrarSEsion(object sender, RoutedEventArgs e)
+        {
+            Login ventanaLogin = new Login();
+            ventanaLogin.Show();
+            this.Close();
         }
     }
 }

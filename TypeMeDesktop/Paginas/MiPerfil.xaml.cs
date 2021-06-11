@@ -15,6 +15,9 @@ using System.Windows.Shapes;
 using System.Net.Http;
 using Newtonsoft.Json;
 using TypeMeDesktop.ComunicacionAPI.Login;
+using Microsoft.Win32;
+using System.IO;
+using System.Net.Http.Headers;
 
 namespace TypeMeDesktop.Paginas
 {
@@ -26,6 +29,7 @@ namespace TypeMeDesktop.Paginas
         private InformacionTyper perfilTyper;
         private string correoPrincipalOriginal;
         private string correoSecundarioOriginal;
+        private string direccionDeNuevaImagen;
         private string urlActualizar = "http://localhost:4000/typers/actualizarInfoTyper";
         private string urlActualizarCorreo = "http://localhost:4000/typers/actualizarCorreo";
 
@@ -39,11 +43,56 @@ namespace TypeMeDesktop.Paginas
             correoSecundarioOriginal = infoMiPerfil.ObtenerCorreoSecundario();
             campoEstado.Text = infoMiPerfil.Estado;
             perfilTyper = infoMiPerfil;
+            direccionDeNuevaImagen = null;
+
+            if (infoMiPerfil.FotoDePerfil != null)
+            {
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(infoMiPerfil.FotoDePerfil, UriKind.Absolute);
+                bitmap.EndInit();
+                fotoDePerfil.ImageSource = bitmap;
+            }
         }
 
-        private void ActualizarFotoDePerfil(object sender, RoutedEventArgs e)
+        private async void ActualizarFotoDePerfil(object sender, RoutedEventArgs e)
         {
-            
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image files (*.jpg)|*.jpg";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                direccionDeNuevaImagen = openFileDialog.FileName;
+
+                var cliente = new HttpClient();
+
+                using var form = new MultipartFormDataContent();
+                using var fileContent = new ByteArrayContent(await File.ReadAllBytesAsync(direccionDeNuevaImagen));
+                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+                form.Add(fileContent, "file", System.IO.Path.GetFileName(direccionDeNuevaImagen));
+
+
+                var response = await cliente.PostAsync($"http://localhost:4000/typers/ActualizarImagenPerfil?idTyper={perfilTyper.IdTyper}", form);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    RespuestaDeActualizacion result = System.Text.Json.JsonSerializer.Deserialize<RespuestaDeActualizacion>(responseContent);
+
+                    if (result.status)
+                    {
+                        BitmapImage bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri(result.result.FotoDePerfil, UriKind.Absolute);
+                        bitmap.EndInit();
+
+                        fotoDePerfil.ImageSource = bitmap;
+                        MessageBox.Show("Imagen de perfil actualizada");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ocurrio un error al actualizar la imagen");
+                    }
+                }
+            }
         }
 
         private void ActualizarUsuario(object sender, RoutedEventArgs e)
@@ -174,6 +223,7 @@ namespace TypeMeDesktop.Paginas
             botonCorreoSecundario.IsEnabled = false;
             botonEstado.IsEnabled = false;
         }
+        
         public void ActivarBotones()
         {
             botonImagen.IsEnabled = true;

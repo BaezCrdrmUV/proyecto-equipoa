@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,13 +28,19 @@ namespace TypeMeDesktop.Recursos
             InitializeComponent();
             autorDeMensaje.Text = mensaje.Typer.Username;
             contenidoDeMensaje.Text = mensaje.Contenido;
-        }
 
-        public ControlMensaje(string mensaje, string usuario)
-        {
-            InitializeComponent();
-            autorDeMensaje.Text = usuario;
-            contenidoDeMensaje.Text = mensaje;
+
+            if (!string.IsNullOrEmpty(mensaje.IdMultimedia))
+            {
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(mensaje.IdMultimedia, UriKind.Absolute);
+                bitmap.EndInit();
+
+                imagen.Source = bitmap;
+            }
+
+            
         }
     }
 }

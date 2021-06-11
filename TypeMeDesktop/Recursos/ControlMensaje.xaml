@@ -11,13 +11,13 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition/>
-            <RowDefinition Height="20"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
         <TextBlock x:Name="autorDeMensaje" FontSize="15" Margin="10,0,0,0" Grid.Row="0" FontWeight="Bold" ></TextBlock>
-        <TextBlock x:Name="contenidoDeMensaje" FontSize="15" Margin="15,0,15,0" TextWrapping="Wrap" Grid.Row="1" >
+        <Image x:Name="imagen" Height="auto" Grid.Row="1" Margin="15,10,15,10"></Image>
+        <TextBlock x:Name="contenidoDeMensaje" FontSize="15" Margin="15,5,15,10" TextWrapping="Wrap" Grid.Row="2">
 
         </TextBlock>
-        <TextBlock Name="horaDeMensaje" FontSize="15" Margin="10,0,0,0" Grid.Row="2" ></TextBlock>
     </Grid>
 </UserControl>

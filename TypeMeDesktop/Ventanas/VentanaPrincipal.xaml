@@ -46,7 +46,8 @@
         </Grid>
 
         <StackPanel Grid.Row="0" Grid.Column="1" Background="#D30000" Orientation="Horizontal">
-            <TextBlock x:Name="infoHeader" TextWrapping="WrapWithOverflow"  FontSize="20" VerticalAlignment="Center" TextBlock.Foreground="White" Width="651" />
+            <TextBlock x:Name="infoHeader" TextWrapping="WrapWithOverflow"  FontSize="20" VerticalAlignment="Center" TextBlock.Foreground="White" Width="500" />
+            <Button Style="{StaticResource BotonBasico}" Margin="30,0,0,0" Content="Cerrar sesión" Click="ClickCerrarSEsion"/>
         </StackPanel>
 
 

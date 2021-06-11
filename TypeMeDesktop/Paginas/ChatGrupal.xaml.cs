@@ -1,7 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TypeMeDesktop.ComunicacionAPI.Login;
@@ -17,15 +22,18 @@ namespace TypeMeDesktop.Paginas
     {
         private string urlEnvioDeMensaje = "http://localhost:4000/mensajes/enviarMensaje";
         private string urlObtenerMensajes = "http://localhost:4000/mensajes/obtenerMensajes/";
+        private string urlAgregarIntegrantes = "http://localhost:4000/mensajes/agregarIntegrantes/";
         private InformacionTyper typer;
         private int idGrupo;
         private Ventanas.VentanaPrincipal _miVentana;
+        private string fileName;
 
         public ChatGrupal(int idGrupo, InformacionTyper idTyper, Ventanas.VentanaPrincipal principal)
         {
             this.idGrupo = idGrupo;
             this.typer = idTyper;
             this._miVentana = principal;
+            fileName = null;
 
             InitializeComponent();
 
@@ -34,18 +42,24 @@ namespace TypeMeDesktop.Paginas
 
         private void ClickEnviar(object sender, RoutedEventArgs e)
         {
-            if (!nuevoMensaje.Text.Trim().Equals(""))
+            if (fileName == null)
             {
-                APIEnviarMensaje();
+                APIEnviarMensaje(false);
+            }
+            else if (fileName != null)
+            {
+                APIEnviarMensaje(true);
             }
         }
 
         private void ClickMultimedia(object sender, RoutedEventArgs e)
         {
-            //Aqui se obtiene el stream
-            //se bloquea el cuadro de texto
-            //Se llama a la api de imagenes se le puede pasar el stream de bytes
-            //Se muestra una preview
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image files (*.jpg)|*.jpg";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                fileName = openFileDialog.FileName;
+            }
         }
 
         public void InsertarMensaje(Mensaje nuevo)
@@ -65,13 +79,59 @@ namespace TypeMeDesktop.Paginas
             listaDeMensajes.Children.Add(nuevoControl);
         }
 
-        private async void APIEnviarMensaje()
+        private async Task<string> APIEnviarImagen()
         {
+            var cliente = new HttpClient();
+
+            using var form = new MultipartFormDataContent();
+            using var fileContent = new ByteArrayContent(await File.ReadAllBytesAsync(fileName));
+            fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+            form.Add(fileContent, "file", System.IO.Path.GetFileName(fileName));
+
+
+            var response = await cliente.PostAsync($"http://localhost:4000/mensajes/registrarMultimedia?idTyper={typer.IdTyper}", form);
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                RespuestaRegistroImagen result = System.Text.Json.JsonSerializer.Deserialize<RespuestaRegistroImagen>(responseContent);
+
+                if (result.status)
+                {
+                    return result.result.IdMultimedia;
+                }
+                else
+                {
+                    return "";
+                }
+            }
+
+            return "";
+        }
+
+        private async void APIEnviarMensaje(bool tieneImagen)
+        {
+            string idImagen = "";
+            if (tieneImagen)
+            {
+                idImagen = await APIEnviarImagen();
+                if (string.IsNullOrEmpty(idImagen))
+                {
+                    MessageBox.Show("ocurrio un error en la conexion al enviar la imagen");
+                    return;
+                }
+            }
+            else if (tieneImagen == false && string.IsNullOrWhiteSpace(nuevoMensaje.Text))
+            {
+                return;
+            }
+
+
             EnvioDeMensaje nuevoMsj = new EnvioDeMensaje()
             {
                 contenido = nuevoMensaje.Text.Trim(),
                 idGrupo = idGrupo.ToString(),
-                idTyper = typer.IdTyper
+                idTyper = typer.IdTyper,
+                idMultimedia = idImagen
             };
 
             var cliente = new HttpClient();
@@ -97,8 +157,11 @@ namespace TypeMeDesktop.Paginas
                             IdMensaje = infoRegistro.result.IdMensaje,
                             IdGrupo = infoRegistro.result.IdGrupo,
                             Contenido = infoRegistro.result.Contenido,
-                            Typer = infoRegistro.result.Typer
+                            Typer = infoRegistro.result.Typer,
+                            IdMultimedia = infoRegistro.result.IdMultimedia
                         };
+
+                        fileName = null;
 
 
                         await _miVentana.EnviarMensaje(nuevo);
@@ -138,6 +201,52 @@ namespace TypeMeDesktop.Paginas
                         {
                             InsertarMensaje(mensaje);
                         }
+                    }
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show("ocurrio un error en la conexion al enviar el mensaje");
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show("ocurrio un error en la conexion al enviar el mensaje");
+            }
+        }
+
+        private void ClickAgregarMiembro(object sender, RoutedEventArgs e)
+        {
+            Ventanas.ListaDeContactos ventanaDeAgregacion = new Ventanas.ListaDeContactos(typer.IdTyper);
+            
+            if (ventanaDeAgregacion.ShowDialog() == true)
+            {
+                APIAgregarTypersAChat(ventanaDeAgregacion.ListaAgregados);
+            }
+        }
+
+        private async void APIAgregarTypersAChat(List<InformacionTyper> listaDeNuevosTypers)
+        {
+            var cliente = new HttpClient();
+
+            string json = JsonConvert.SerializeObject(listaDeNuevosTypers);
+            HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            try
+            {
+                var httpresponse = await cliente.PostAsync(String.Concat(urlAgregarIntegrantes, idGrupo), content);
+
+                if (httpresponse.IsSuccessStatusCode)
+                {
+                    var result = await httpresponse.Content.ReadAsStringAsync();
+                    var infoRegistro = JsonConvert.DeserializeObject<RespuestaAgregacionAChat>(result);
+
+                    if (bool.Parse(infoRegistro.status))
+                    {
+                        MessageBox.Show(infoRegistro.message);
+                    }
+                    else
+                    {
+                        MessageBox.Show(infoRegistro.message);
                     }
                 }
             }
