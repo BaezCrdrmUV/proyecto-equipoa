@@ -147,7 +147,7 @@ router.post("/agregarIntegrantes/:idGrupo", async (req, res) => {
     integrantesBody.forEach(integrante => {
         nuevosIntegrantes.push({
             idGrupo: idGrupo,
-            idTyper: integrante.idTyper
+            idTyper: integrante.IdTyper
         })
     });
 
