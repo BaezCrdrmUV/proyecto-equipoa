@@ -1,0 +1,13 @@
+=
+4D:\typeme\MSMensajes\Controllers\GruposController.csutf-8?
+6D:\typeme\MSMensajes\Controllers\MensajesController.csutf-8=
+4D:\typeme\MSMensajes\Converters\ConvertidorDeJson.csutf-8-
+$D:\typeme\MSMensajes\Models\Grupo.csutf-8/
+&D:\typeme\MSMensajes\Models\Mensaje.csutf-87
+.D:\typeme\MSMensajes\Models\MensajesContext.csutf-81
+(D:\typeme\MSMensajes\Models\Pertenece.csutf-8(
+D:\typeme\MSMensajes\Program.csutf-8(
+D:\typeme\MSMensajes\Startup.csutf-8_
+TD:\typeme\MSMensajes\obj\Debug\net5.0\.NETCoreApp,Version=v5.0.AssemblyAttributes.csutf-8K
+@D:\typeme\MSMensajes\obj\Debug\net5.0\MSMensajes.AssemblyInfo.csutf-8^
+SD:\typeme\MSMensajes\obj\Debug\net5.0\MSMensajes.MvcApplicationPartsAssemblyInfo.csutf-8

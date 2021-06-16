@@ -176,6 +176,13 @@ namespace MSMensajes.Controllers
                 return BadRequest(_resultado);
             }
 
+            if (string.IsNullOrEmpty(nuevoGrupo.Nombre) || string.IsNullOrEmpty(nuevoGrupo.Descripcion))
+            {
+                _logger.LogError("El grupo no tiene los datos necesarios");
+                _resultado = ConvertidorDeJson.ConvertirResultadoFallido("El grupo no tiene los datos necesarios");
+                return BadRequest(_resultado);
+            }
+
             nuevoGrupo.FechaCreacion = DateTime.Now;
             _mensajesContext.Entry(nuevoGrupo).State = EntityState.Added;
             _mensajesContext.AddRange(nuevoGrupo.Perteneces);
