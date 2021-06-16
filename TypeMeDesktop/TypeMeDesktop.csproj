@@ -7,8 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Recursos\chat.png" />
+    <None Remove="Recursos\Logo.jpg" />
+    <None Remove="Recursos\perfil.png" />
+  </ItemGroup>
+
+  <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.5" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Recursos\chat.png" />
+    <Resource Include="Recursos\Logo.jpg" />
+    <Resource Include="Recursos\perfil.png" />
   </ItemGroup>
 
 </Project>

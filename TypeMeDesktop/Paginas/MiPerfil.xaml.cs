@@ -30,8 +30,10 @@ namespace TypeMeDesktop.Paginas
         private string correoPrincipalOriginal;
         private string correoSecundarioOriginal;
         private string direccionDeNuevaImagen;
-        private string urlActualizar = "http://localhost:4000/typers/actualizarInfoTyper";
-        private string urlActualizarCorreo = "http://localhost:4000/typers/actualizarCorreo";
+        private string urlActualizar = Recursos.RecursosGlobales.RUTA_API + "/typers/actualizarInfoTyper";
+        private string urlActualizarCorreo = Recursos.RecursosGlobales.RUTA_API + "/typers/actualizarCorreo";
+        private string urlActualizarImagenPerfil = Recursos.RecursosGlobales.RUTA_API + "/typers/ActualizarImagenPerfil";
+        
 
         public MiPerfil(InformacionTyper infoMiPerfil)
         {
@@ -53,6 +55,14 @@ namespace TypeMeDesktop.Paginas
                 bitmap.EndInit();
                 fotoDePerfil.ImageSource = bitmap;
             }
+            else
+            {
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(@"..\..\..\Recursos\perfil.png", UriKind.Relative);
+                bitmap.EndInit();
+                fotoDePerfil.ImageSource = bitmap;
+            }
         }
 
         private async void ActualizarFotoDePerfil(object sender, RoutedEventArgs e)
@@ -71,7 +81,7 @@ namespace TypeMeDesktop.Paginas
                 form.Add(fileContent, "file", System.IO.Path.GetFileName(direccionDeNuevaImagen));
 
 
-                var response = await cliente.PostAsync($"http://localhost:4000/typers/ActualizarImagenPerfil?idTyper={perfilTyper.IdTyper}", form);
+                var response = await cliente.PostAsync(urlActualizarImagenPerfil + $"?idTyper={perfilTyper.IdTyper}", form);
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();

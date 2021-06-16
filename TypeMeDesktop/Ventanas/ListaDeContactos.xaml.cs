@@ -24,7 +24,7 @@ namespace TypeMeDesktop.Ventanas
     /// </summary>
     public partial class ListaDeContactos : Window
     {
-        private string urlListaDeContactos = "http://localhost:4000/typers/obtenerContactos/";
+        private string urlListaDeContactos = Recursos.RecursosGlobales.RUTA_API + "/typers/obtenerContactos/";
         public ObservableCollection<InformacionTyper> listaDeContacto;
         private string idTyper;
         public List<InformacionTyper> ListaAgregados { get; set; }

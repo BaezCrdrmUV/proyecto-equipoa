@@ -21,7 +21,8 @@ namespace TypeMeDesktop.Ventanas
     public partial class VentanaPrincipal : Window
     {
         private InformacionTyper perfilTyper;
-        private string urlListaDeGrupos = "http://localhost:4000/mensajes/misGrupos/";
+        private string urlListaDeGrupos = Recursos.RecursosGlobales.RUTA_API + "/mensajes/misGrupos/";
+        private string urlSignalR = Recursos.RecursosGlobales.RUTA_SIGNALR_SERVER + "/chatHub";
         private HubConnection _conexion;
         private Dictionary<int, Ellipse> notificaciones;
         private int idGrupoAbiertoActual = 0;
@@ -42,7 +43,7 @@ namespace TypeMeDesktop.Ventanas
 
         public async void ConectarAHub()
         {
-            _conexion = new HubConnectionBuilder().WithUrl("http://localhost:5000/chatHub").Build();
+            _conexion = new HubConnectionBuilder().WithUrl(urlSignalR).Build();
             _conexion.Closed += async (error) =>
             {
                 await Task.Delay(new Random().Next(0, 5) * 1000);
@@ -94,13 +95,15 @@ namespace TypeMeDesktop.Ventanas
         private void ClickNuevoChat(object sender, RoutedEventArgs e)
         {
             this.infoHeader.Text = "Crear nuevo chat";
+            this.desciptionHeader.Text = "";
             idGrupoAbiertoActual = 0;
             PaginaFrame.Navigate(new TypeMeDesktop.Paginas.ListaDeContactos(perfilTyper.IdTyper, this));
         }
 
         private void ClickNuevoContacto(object sender, RoutedEventArgs e)
         {
-            this.infoHeader.Text = "Agregar nuevo contacto";
+            this.infoHeader.Text = "Nuevo contacto";
+            this.desciptionHeader.Text = "";
             idGrupoAbiertoActual = 0;
             PaginaFrame.Navigate(new AgregarContacto(perfilTyper.IdTyper));
         }
@@ -108,6 +111,7 @@ namespace TypeMeDesktop.Ventanas
         private void ClickMiCuenta(object sender, RoutedEventArgs e)
         {
             this.infoHeader.Text = perfilTyper.Username;
+            this.desciptionHeader.Text = "";
             idGrupoAbiertoActual = 0;
             PaginaFrame.Navigate(new MiPerfil(perfilTyper));
         }
@@ -128,7 +132,14 @@ namespace TypeMeDesktop.Ventanas
             imagenPerfil.Height = 60;
             imagenPerfil.Width = 60;
             ImageBrush imagen = new ImageBrush();
-            imagen.ImageSource = new BitmapImage(new Uri("C:\\Users\\Angel\\Desktop\\Exportacion\\4.png"));
+
+
+            BitmapImage bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(@"..\..\..\Recursos\chat.png", UriKind.Relative);
+            bitmap.EndInit();
+
+            imagen.ImageSource = bitmap;
             imagenPerfil.Fill = imagen;
 
             TextBlock nombreGrupo = new TextBlock();
@@ -155,6 +166,7 @@ namespace TypeMeDesktop.Ventanas
             nuevaPreviewChat.Click += (s, ev) =>
             {
                 this.infoHeader.Text = grupo.Nombre;
+                this.desciptionHeader.Text = grupo.Descripcion;
                 Ellipse notificacionActiva;
                 notificaciones.TryGetValue(grupo.IdGrupo, out notificacionActiva);
                 notificacionActiva.Visibility = Visibility.Hidden;
@@ -183,6 +195,7 @@ namespace TypeMeDesktop.Ventanas
                     {
                         if (infoGrupos.result.Count != 0)
                         {
+                            notificaciones.Clear();
                             listaDeChats.Children.Clear();
                             foreach (InfoGrupo grupo in infoGrupos.result)
                             {

@@ -9,7 +9,7 @@
       Title="Bienvenida">
 
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Image Source="D:\Repositorios\TypeMe\TypeMeDesktop\TypeMeDesktop\Recursos\Logo.png" Width="200"></Image>
+        <Image Source="../Recursos/Logo.jpg" Width="200"></Image>
         <TextBlock FontSize="30" >Bienvenido a TypeMe</TextBlock>
     </StackPanel>
 </Page>

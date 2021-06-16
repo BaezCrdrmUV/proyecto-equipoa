@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,7 +23,7 @@ namespace TypeMeDesktop.Ventanas
     /// </summary>
     public partial class RegistrarCuenta : Window
     {
-        private string urlregistro = "http://localhost:4000/typers/registrarTyper";
+        private string urlregistro = Recursos.RecursosGlobales.RUTA_API + "/typers/registrarTyper";
         public RegistrarCuenta()
         {
             InitializeComponent();
@@ -30,7 +31,7 @@ namespace TypeMeDesktop.Ventanas
 
         private void ClickCrearCuenta(object sender, RoutedEventArgs e)
         {
-            if (CamposCompletos() && ContraseniasCorrectas())
+            if (CamposCompletos() && ContraseniasCorrectas() && CorreosValidos())
             {
                 Desactivarbotones();
                 InformacionTyper nuevoTyper = CrearUsuario();
@@ -111,6 +112,24 @@ namespace TypeMeDesktop.Ventanas
             };
 
             return nuevoTyper;
+        }
+
+        private bool CorreosValidos()
+        {
+            bool valido = false;
+
+            Regex email = new Regex("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+
+            if (email.IsMatch(campoCorreoPrincipal.Text.Trim()) && email.IsMatch(campoCorreoSecundario.Text.Trim()))
+            {
+                valido = true;
+            }
+            else
+            {
+                MessageBox.Show("ALguno de los correos ingresados no es valido");
+            }
+
+            return valido;
         }
 
         private async void APIRegistro(InformacionTyper nuevoTyper)

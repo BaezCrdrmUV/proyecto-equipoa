@@ -20,9 +20,10 @@ namespace TypeMeDesktop.Paginas
     /// </summary>
     public partial class ChatGrupal : Page
     {
-        private string urlEnvioDeMensaje = "http://localhost:4000/mensajes/enviarMensaje";
-        private string urlObtenerMensajes = "http://localhost:4000/mensajes/obtenerMensajes/";
-        private string urlAgregarIntegrantes = "http://localhost:4000/mensajes/agregarIntegrantes/";
+        private string urlEnvioDeMensaje = RecursosGlobales.RUTA_API + "/mensajes/enviarMensaje";
+        private string urlObtenerMensajes = RecursosGlobales.RUTA_API + "/mensajes/obtenerMensajes/";
+        private string urlAgregarIntegrantes = RecursosGlobales.RUTA_API + "/mensajes/agregarIntegrantes/";
+        private string urlEnvioDeImagen = RecursosGlobales.RUTA_API + "/mensajes/registrarMultimedia";
         private InformacionTyper typer;
         private int idGrupo;
         private Ventanas.VentanaPrincipal _miVentana;
@@ -89,7 +90,7 @@ namespace TypeMeDesktop.Paginas
             form.Add(fileContent, "file", System.IO.Path.GetFileName(fileName));
 
 
-            var response = await cliente.PostAsync($"http://localhost:4000/mensajes/registrarMultimedia?idTyper={typer.IdTyper}", form);
+            var response = await cliente.PostAsync(urlEnvioDeImagen + $"?idTyper={typer.IdTyper}", form);
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync();

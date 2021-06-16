@@ -25,7 +25,7 @@ namespace TypeMeDesktop.Paginas
     public partial class AgregarContacto : Page
     {
         private string idTyper;
-        private string urlRegistroContacto = "http://localhost:4000/typers/agregarContacto";
+        private string urlRegistroContacto = Recursos.RecursosGlobales.RUTA_API + "/typers/agregarContacto";
         public AgregarContacto(string idTyper)
         {
             InitializeComponent();

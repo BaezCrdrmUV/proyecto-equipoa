@@ -27,8 +27,8 @@ namespace TypeMeDesktop.Paginas
     /// </summary>
     public partial class ListaDeContactos : Page
     {
-        private string urlRegistroGrupo = "http://localhost:4000/mensajes/crearGrupo";
-        private string urlListaDeContactos = "http://localhost:4000/typers/obtenerContactos/";
+        private string urlRegistroGrupo = Recursos.RecursosGlobales.RUTA_API + "/mensajes/crearGrupo";
+        private string urlListaDeContactos = Recursos.RecursosGlobales.RUTA_API + "/typers/obtenerContactos/";
         private string idTyper;
         public List<InformacionTyper> listaDeNuevoGrupo;
         public List<string> listaDeNombresGrupo;

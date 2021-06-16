@@ -12,7 +12,7 @@ namespace TypeMeDesktop.Ventanas
     /// </summary>
     public partial class Login : Window
     {
-        private string urlLogin = "http://localhost:4000/typers/loginTyper";
+        private string urlLogin = Recursos.RecursosGlobales.RUTA_API + "/typers/loginTyper";
         
         public Login()
         {
