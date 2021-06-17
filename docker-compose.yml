@@ -6,7 +6,7 @@ services:
     ports: 
       - "3320:3306"
     volumes: 
-     # - db_volume_typers:/var/lib/mysql
+      - db_volume_typers:/var/lib/mysql
       - ../db/typers.sql:/docker-entrypoint-initdb.d/typers.sql:ro
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_0900_ai_ci']
     environment: 
@@ -23,7 +23,7 @@ services:
     hostname: mongo_contactos
     restart: unless-stopped
     volumes: 
-      #- db_volume_contactos:/data/db
+      - db_volume_contactos:/data/db
       - ../db/contactos.js:/docker-entrypoint-initdb.d/contactos.js:ro
     command: mongod --auth
     environment: 
@@ -37,7 +37,7 @@ services:
     ports: 
       - "3322:3306"
     volumes: 
-     # - db_volume_mensajes:/var/lib/mysql
+      - db_volume_mensajes:/var/lib/mysql
       - ../db/mensajes.sql:/docker-entrypoint-initdb.d/mensajes.sql:ro
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_0900_ai_ci']
     environment: 
@@ -52,7 +52,7 @@ services:
     ports: 
       - "3323:3306"
     volumes: 
-    #  - db_volume_multimedia:/var/lib/mysql
+      - db_volume_multimedia:/var/lib/mysql
       - ../db/multimedia.sql:/docker-entrypoint-initdb.d/multimedia.sql:ro
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_0900_ai_ci']
     environment: 
@@ -118,8 +118,18 @@ services:
       URL_MS_CONTACTOS: http://ms_contactos:5000
     container_name: apigateway
 
-# volumes:
-#   db_volume_typers:
-#   db_volume_contactos:
-#   db_volume_mensajes:
-#   db_volume_multimedia:
+  typeme_web:
+    image: typeme_web
+    ports: 
+      - "5000:80"
+    build: 
+      context: ..\TypeMeWeb\
+      dockerfile: Dockerfile
+    environment: 
+      URL_API: "http://apigateway:4000"
+
+volumes:
+  db_volume_typers:
+  db_volume_contactos:
+  db_volume_mensajes:
+  db_volume_multimedia:
